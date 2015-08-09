@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
+	<classpathentry sourcepath="/Users/ltang/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.12/58697792617f38bf86d8e26bc004aac505e516a9/slf4j-api-1.7.12-sources.jar" kind="lib" path="/Users/ltang/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.12/8e20852d05222dc286bf1c71d78d0531e177c317/slf4j-api-1.7.12.jar" exported="true"/>
+	<classpathentry sourcepath="/Users/ltang/.gradle/caches/modules-2/files-2.1/de.bwaldvogel/liblinear/1.95/b05a0817ee8f24b9cfbe0e443213cc25a50381d4/liblinear-1.95-sources.jar" kind="lib" path="/Users/ltang/.gradle/caches/modules-2/files-2.1/de.bwaldvogel/liblinear/1.95/d25f8000417e0123876f16ea2319fa445c9324f8/liblinear-1.95.jar" exported="true"/>
+	<classpathentry sourcepath="/Users/ltang/.gradle/caches/modules-2/files-2.1/org.testng/testng/6.8.7/e8af915a4e86396afac9b7708152fb587e64554e/testng-6.8.7-sources.jar" kind="lib" path="/Users/ltang/.gradle/caches/modules-2/files-2.1/org.testng/testng/6.8.7/3eaa6cbb13e327f3f1154d336dff11d7e83a727e/testng-6.8.7.jar" exported="true"/>
+	<classpathentry sourcepath="/Users/ltang/.gradle/caches/modules-2/files-2.1/junit/junit/4.10/6c98d6766e72d5575f96c9479d1c1d3b865c6e25/junit-4.10-sources.jar" kind="lib" path="/Users/ltang/.gradle/caches/modules-2/files-2.1/junit/junit/4.10/e4f1766ce7404a08f45d859fb9c226fc9e41a861/junit-4.10.jar" exported="true"/>
+	<classpathentry kind="lib" path="/Users/ltang/.gradle/caches/modules-2/files-2.1/org.beanshell/bsh/2.0b4/a05f0a0feefa8d8467ac80e16e7de071489f0d9c/bsh-2.0b4.jar" exported="true"/>
+	<classpathentry sourcepath="/Users/ltang/.gradle/caches/modules-2/files-2.1/com.beust/jcommander/1.27/fae697ac46477a5227a5ee14f8f3a1270a4627b0/jcommander-1.27-sources.jar" kind="lib" path="/Users/ltang/.gradle/caches/modules-2/files-2.1/com.beust/jcommander/1.27/58c9cbf0f1fa296f93c712f2cf46de50471920f9/jcommander-1.27.jar" exported="true"/>
+	<classpathentry sourcepath="/Users/ltang/.gradle/caches/modules-2/files-2.1/org.yaml/snakeyaml/1.12/f86c67beb22f7d1edb5d6c6a3c4dab77a23234da/snakeyaml-1.12-sources.jar" kind="lib" path="/Users/ltang/.gradle/caches/modules-2/files-2.1/org.yaml/snakeyaml/1.12/ebe66a6b88caab31d7a19571ad23656377523545/snakeyaml-1.12.jar" exported="true"/>
+	<classpathentry sourcepath="/Users/ltang/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.1/2ccf1154d1a8936042a8a742dc3e611d02ac7213/hamcrest-core-1.1-sources.jar" kind="lib" path="/Users/ltang/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.1/860340562250678d1a344907ac75754e259cdb14/hamcrest-core-1.1.jar" exported="true"/>
+</classpath>
