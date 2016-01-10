@@ -1,5 +1,12 @@
 .gradle
-build/
+.svn
+.DS_Store
+build
+target
+out
 bin/
 test-output/
-
+*.iml
+*.ipr
+*.iws
+*.pyc
