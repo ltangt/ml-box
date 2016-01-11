@@ -10,3 +10,5 @@ test-output/
 *.ipr
 *.iws
 *.pyc
+.classpath
+.project

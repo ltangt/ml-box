@@ -1,4 +1,4 @@
-package edu.fiu.cis.mlbox.classifier.eval;
+package org.ltang.mlbox.classifier.eval;
 
 import java.util.Random;
 

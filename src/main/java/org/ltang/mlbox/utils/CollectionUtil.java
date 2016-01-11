@@ -1,4 +1,4 @@
-package edu.fiu.cis.mlbox.utils;
+package org.ltang.mlbox.utils;
 
 import java.util.ArrayList;
 

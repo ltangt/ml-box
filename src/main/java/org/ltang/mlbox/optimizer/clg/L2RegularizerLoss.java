@@ -1,6 +1,7 @@
-package edu.fiu.cis.mlbox.optimizer.clg;
+package org.ltang.mlbox.optimizer.clg;
 
-import edu.fiu.cis.mlbox.utils.VectorUtil;
+import org.ltang.mlbox.utils.VectorUtil;
+
 
 /**
  * The L2 regularization loss

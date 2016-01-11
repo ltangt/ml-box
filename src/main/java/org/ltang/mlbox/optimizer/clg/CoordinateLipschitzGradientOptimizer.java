@@ -1,7 +1,8 @@
-package edu.fiu.cis.mlbox.optimizer.clg;
+package org.ltang.mlbox.optimizer.clg;
 
-import edu.fiu.cis.mlbox.utils.MathFunctions;
-import edu.fiu.cis.mlbox.utils.VectorUtil;
+import org.ltang.mlbox.utils.MathFunctions;
+import org.ltang.mlbox.utils.VectorUtil;
+
 
 /**
  * The implementation of coordinate Lipschitz constant gradient optimization

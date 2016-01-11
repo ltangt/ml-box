@@ -1,4 +1,4 @@
-package edu.fiu.cis.mlbox.optimizer.clg;
+package org.ltang.mlbox.optimizer.clg;
 
 /**
  * The abstract class of the loss function for the coordinate Lipschitz constant gradient algorithm
@@ -16,6 +16,6 @@ public abstract class CoordinateLipschitzGradientLoss {
 	abstract public double getMaxSecondDerivative(int dimIndex);
 	
 	public void coefficientUpdate(int dimIndex, double delta, double[] newBeta) {
-    }
+	}
 
 }
