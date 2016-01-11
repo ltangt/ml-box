@@ -22,16 +22,13 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
 
   final int _dimension;
 
-  final boolean _hasIntercept;
-
   final Instance[] _instances;
 
-  public LogisticLoss(int dimension, final Instance[] instances, final boolean hasIntercept) {
+  public LogisticLoss(int dimension, final Instance[] instances) {
     _instances = instances;
-    _hasIntercept = hasIntercept;
-    _dimension = hasIntercept ? (dimension + 1) : dimension;
-    _colIndexArrs = new int[this._dimension][];
-    _colValArrs = new double[this._dimension][];
+    _dimension = dimension;
+    _colIndexArrs = new int[_dimension+1][];
+    _colValArrs = new double[_dimension+1][];
 
     // Create the cache of the sum of the inner product between the beta_j and x_j
     _innerProducts = new double[_instances.length];
@@ -88,9 +85,7 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
         maxNumEntries[dimIndex]++;
       }
     }
-    if (_hasIntercept) {
-      maxNumEntries[_dimension - 1] = numInsts;
-    }
+    maxNumEntries[_dimension - 1] = numInsts;
 
     // Allocate the memory for the column store
     for (int dim = 0; dim < _dimension; dim++) {
@@ -116,10 +111,8 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
         _colValArrs[dimIndex][entryIndex] = x[j];
         entryIndices[dimIndex]++;
       }
-      if (_hasIntercept) {
-        _colIndexArrs[_dimension - 1][instIndex] = instIndex;
-        _colValArrs[_dimension - 1][instIndex] = 1;
-      }
+      _colIndexArrs[_dimension - 1][instIndex] = instIndex;
+      _colValArrs[_dimension - 1][instIndex] = 1;
     }
   }
 
@@ -188,7 +181,7 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
 
   private double expected(final double[] beta, final SparseVector feature) {
     double sum = feature.innerProduct(beta);
-    sum = _hasIntercept ? (sum + beta[beta.length - 1]) : sum;
+    sum = sum + beta[beta.length - 1];
     return MathFunctions.sigmoid(sum);
   }
 }

@@ -22,7 +22,7 @@ public class LogisticRegressionTest {
 
   @Test()
   public void testToy1() {
-    LogisticRegression LR = new LogisticRegression(true);
+    LogisticRegression LR = new LogisticRegression();
     float[][] data = new float[4][];
     float[] labels = new float[4];
     data[0] = new float[]{0f, -1f};
@@ -59,7 +59,7 @@ public class LogisticRegressionTest {
       throws IOException, Exception {
     int dimension = 123;
     LIBSVMDataLoader trainLoader = new LIBSVMDataLoader("data/libsvm/a1a.train.txt", dimension);
-    LogisticRegression LR = new LogisticRegression(true);
+    LogisticRegression LR = new LogisticRegression();
     LR.train(dimension, trainLoader.getInstances());
 
     LIBSVMDataLoader testLoader = new LIBSVMDataLoader("data/libsvm/a1a.test.txt", dimension);
@@ -100,7 +100,8 @@ public class LogisticRegressionTest {
         numAcc++;
       }
     }
-    aucScore = auc.calc(scores, labels);
+    double LibLinear_aucScore = auc.calc(scores, labels);
     System.out.println("Liblinear AUC = " + aucScore + " , Accuracy = " + ((double) numAcc) / numTests);
+    Assert.assertTrue(aucScore > LibLinear_aucScore*0.95);
   }
 }

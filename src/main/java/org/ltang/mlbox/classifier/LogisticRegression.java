@@ -22,23 +22,12 @@ public class LogisticRegression {
   // The trained coefficients
   double[] beta = null;
 
-  boolean hasIntercept = true;
-
   public LogisticRegression() {
     this(1.0);
   }
 
-  public LogisticRegression(boolean hasIntercept) {
-    this(1.0, hasIntercept);
-  }
-
   public LogisticRegression(double lambda) {
-    this(lambda, false);
-  }
-
-  public LogisticRegression(double lambda, boolean hasIntercept) {
     this.lambda = lambda;
-    this.hasIntercept = hasIntercept;
   }
 
   /**
@@ -68,21 +57,17 @@ public class LogisticRegression {
    */
   public void train(int dimension, final Instance[] instances) {
     // Create the logistic loss function
-    LogisticLoss logLoss = new LogisticLoss(dimension, instances, hasIntercept);
+    LogisticLoss logLoss = new LogisticLoss(dimension, instances);
     // Create the L2 loss
-    L2RegularizerLoss l2loss = new L2RegularizerLoss(dimension, hasIntercept);
+    L2RegularizerLoss l2loss = new L2RegularizerLoss(dimension);
     // Combine the two loss functions
     LinearCombineLoss loss = new LinearCombineLoss();
     loss.add(logLoss);
     loss.add(l2loss, lambda);
 
     // Create the optimizer
-    CoordinateLipschitzGradientOptimizer optimizer = null;
-    if (hasIntercept) {
-      optimizer = new CoordinateLipschitzGradientOptimizer(dimension + 1, loss);
-    } else {
-      optimizer = new CoordinateLipschitzGradientOptimizer(dimension, loss);
-    }
+    CoordinateLipschitzGradientOptimizer optimizer = new CoordinateLipschitzGradientOptimizer(dimension, loss);
+
     // Start the training algorithm to minimize the loss
     optimizer.train();
     beta = optimizer.getCofficients();
@@ -97,7 +82,7 @@ public class LogisticRegression {
       throw new IllegalStateException("The coefficients have not been trained!");
     }
     double sum = feature.innerProduct(this.beta);
-    sum = hasIntercept ? (sum + beta[beta.length - 1]) : sum;
+    sum = sum + beta[beta.length - 1];
     return MathFunctions.sigmoid(sum);
   }
 
