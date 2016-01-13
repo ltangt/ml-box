@@ -12,15 +12,15 @@ import org.ltang.mlbox.utils.VectorUtil;
  */
 public class CoordinateLipschitzGradientOptimizer {
 
-	final double[] beta;
+	final double[] _beta;
 
-	final int dimension;
+	final int _dimension;
 
-	int MAX_ITER = 500;
+	int _max_iter = 500;
 
-	final double[] maxSecondDerivaties;
+	final double[] _maxSecondDerivaties;
 
-	final CoordinateLipschitzGradientLoss loss;
+	final CoordinateLipschitzGradientLoss _loss;
 
 	transient int DEBUG = 0;
 
@@ -28,11 +28,11 @@ public class CoordinateLipschitzGradientOptimizer {
 
 	public CoordinateLipschitzGradientOptimizer(int dimension,
 			CoordinateLipschitzGradientLoss loss) {
-		this.dimension = dimension;
-		this.loss = loss;
-		this.beta = new double[dimension];
-		this.maxSecondDerivaties = new double[dimension];
-		this.loss.coefficientUpdate(0, 0, this.beta);
+		this._dimension = dimension;
+		this._loss = loss;
+		this._beta = new double[dimension];
+		this._maxSecondDerivaties = new double[dimension];
+		this._loss.coefficientUpdate(0, 0, this._beta);
 	}
 
 	public void setDebug(int debug) {
@@ -40,7 +40,7 @@ public class CoordinateLipschitzGradientOptimizer {
 	}
 
 	public void setMaxNumIteration(int maxIter) {
-		this.MAX_ITER = maxIter;
+		this._max_iter = maxIter;
 	}
 
 	/**
@@ -53,16 +53,16 @@ public class CoordinateLipschitzGradientOptimizer {
 		double grad = 0;
 		double maxSecondDerivative = 0;
 		double delta;
-		for (int dimIndex = 0; dimIndex < dimension; dimIndex++) {
-			grad = loss.getGradient(dimIndex);
-			maxSecondDerivative = this.maxSecondDerivaties[dimIndex];
+		for (int dimIndex = 0; dimIndex < _dimension; dimIndex++) {
+			grad = _loss.getGradient(dimIndex);
+			maxSecondDerivative = this._maxSecondDerivaties[dimIndex];
 
 			delta = -1.0 / maxSecondDerivative * grad;
-			double newBeta = beta[dimIndex] + delta;
-			if (MathFunctions.almostEqual(newBeta, beta[dimIndex], EPS) == false) {
+			double newBeta = _beta[dimIndex] + delta;
+			if (MathFunctions.almostEqual(newBeta, _beta[dimIndex], EPS) == false) {
 				nBetaUpdated++;
-				beta[dimIndex] = newBeta;
-				loss.coefficientUpdate(dimIndex, delta, beta);
+				_beta[dimIndex] = newBeta;
+				_loss.coefficientUpdate(dimIndex, delta, _beta);
 			}
 		}
 
@@ -70,23 +70,23 @@ public class CoordinateLipschitzGradientOptimizer {
 	}
 
 	public void train() {
-		// Initialize the coefficients and costs for each loss objective
+		// Initialize the coefficients and costs for each _loss objective
 		
-		for (int dimIndex = 0; dimIndex < dimension; dimIndex++) {
-			double maxSecDev = loss.getMaxSecondDerivative(dimIndex);
+		for (int dimIndex = 0; dimIndex < _dimension; dimIndex++) {
+			double maxSecDev = _loss.getMaxSecondDerivative(dimIndex);
 			if (maxSecDev < EPS) {
 				maxSecDev = EPS;
 			}
-			this.maxSecondDerivaties[dimIndex] = maxSecDev;
+			this._maxSecondDerivaties[dimIndex] = maxSecDev;
 		}
 
 		if (DEBUG >= 1) {
-			System.out.println("Initial cost: " + loss.cost(beta));
+			System.out.println("Initial cost: " + _loss.cost(_beta));
 		}
 
 		// Start optimization
 		int iter = 0;
-		for (iter = 0; iter < MAX_ITER; iter++) {
+		for (iter = 0; iter < _max_iter; iter++) {
 			int nCoefficientsUpdated = updateBeta(iter);
 			if (nCoefficientsUpdated == 0) {
 				break; // all Converged
@@ -95,33 +95,33 @@ public class CoordinateLipschitzGradientOptimizer {
 			/////////////////// debug //////////////////////
 			if (DEBUG == 1) {
 				if (iter % 2 == 0) {
-					System.out.println("iter : " + iter + ",  cost : " + loss.cost(beta) + ", #cofficientUpdated: "
+					System.out.println("iter : " + iter + ",  cost : " + _loss.cost(_beta) + ", #cofficientUpdated: "
 							+ nCoefficientsUpdated);
 				}
 			} else if (DEBUG == 2) {
 				System.out.println(
-						"iter : " + iter + ",  cost : " + loss.cost(beta) + ", #cofficientUpdated: " + nCoefficientsUpdated);
+						"iter : " + iter + ",  cost : " + _loss.cost(_beta) + ", #cofficientUpdated: " + nCoefficientsUpdated);
 			} else if (DEBUG == 3) {
 				System.out.println(
-						"iter : " + iter + ", cost : " + loss.cost(beta) + ", #cofficientUpdated: " + nCoefficientsUpdated);
+						"iter : " + iter + ", cost : " + _loss.cost(_beta) + ", #cofficientUpdated: " + nCoefficientsUpdated);
 				printParameters();
 			}
 			////////////////////////////////////////////////
 		}
 
 		if (DEBUG >= 1) {
-			System.out.println("Total #iter : " + iter + ",  final cost : " + loss.cost(beta));
+			System.out.println("Total #iter : " + iter + ",  final cost : " + _loss.cost(_beta));
 			printParameters();
 		}
 	}
 	
 
 	public double[] getCofficients() {
-		return this.beta;
+		return this._beta;
 	}
 
 	public void printParameters() {		
-		System.out.println(VectorUtil.toString(beta));
+		System.out.println(VectorUtil.toString(_beta));
 	}
 
 }

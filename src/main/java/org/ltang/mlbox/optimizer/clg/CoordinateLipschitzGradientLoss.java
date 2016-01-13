@@ -1,7 +1,7 @@
 package org.ltang.mlbox.optimizer.clg;
 
 /**
- * The abstract class of the loss function for the coordinate Lipschitz constant gradient algorithm
+ * The abstract class of the _loss function for the coordinate Lipschitz constant gradient algorithm
  * @author Liang Tang
  */
 public abstract class CoordinateLipschitzGradientLoss {

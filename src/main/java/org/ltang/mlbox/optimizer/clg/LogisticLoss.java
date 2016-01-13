@@ -6,7 +6,7 @@ import org.ltang.mlbox.utils.MathFunctions;
 
 
 /**
- * The logistic loss (the negative log-likelihood of logistic regression).
+ * The logistic _loss (the negative log-likelihood of logistic regression).
  * @author Liang Tang
  */
 public class LogisticLoss extends CoordinateLipschitzGradientLoss {
@@ -117,7 +117,7 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
   }
 
   /**
-   * Get the gradient of the logistic loss (the negative of the log-likelihood)
+   * Get the gradient of the logistic _loss (the negative of the log-likelihood)
    *
    * @param dimIndex
    * @return

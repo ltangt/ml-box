@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The weighted linear combination of a set of loss functions
+ * The weighted linear combination of a set of _loss functions
  * @author Liang Tang
  *
  */

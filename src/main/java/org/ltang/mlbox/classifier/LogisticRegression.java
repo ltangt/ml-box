@@ -17,17 +17,25 @@ import org.ltang.mlbox.utils.MathFunctions;
 public class LogisticRegression {
 
   // The weight for the regularizer
-  double lambda = 1.0;
+  double _lambda = 1.0;
 
   // The trained coefficients
-  double[] beta = null;
+  double[] _beta = null;
+
+  // The maximum iteration for the optimization algorithm
+  int _maxIter = -1;
 
   public LogisticRegression() {
     this(1.0);
   }
 
   public LogisticRegression(double lambda) {
-    this.lambda = lambda;
+    this._lambda = lambda;
+  }
+
+  public LogisticRegression(final double lambda, final int maxIter) {
+    this._lambda = lambda;
+    this._maxIter = maxIter;
   }
 
   /**
@@ -63,26 +71,29 @@ public class LogisticRegression {
     // Combine the two loss functions
     LinearCombineLoss loss = new LinearCombineLoss();
     loss.add(logLoss);
-    loss.add(l2loss, lambda);
+    loss.add(l2loss, _lambda);
 
     // Create the optimizer
     CoordinateLipschitzGradientOptimizer optimizer = new CoordinateLipschitzGradientOptimizer(dimension, loss);
+    if (_maxIter > 0) {
+      optimizer.setMaxNumIteration(_maxIter);
+    }
 
     // Start the training algorithm to minimize the loss
     optimizer.train();
-    beta = optimizer.getCofficients();
+    _beta = optimizer.getCofficients();
   }
 
   public double[] getCoefficients() {
-    return beta;
+    return _beta;
   }
 
   public double predict(final SparseVector feature) {
-    if (this.beta == null) {
+    if (this._beta == null) {
       throw new IllegalStateException("The coefficients have not been trained!");
     }
-    double sum = feature.innerProduct(this.beta);
-    sum = sum + beta[beta.length - 1];
+    double sum = feature.innerProduct(this._beta);
+    sum = sum + _beta[_beta.length - 1];
     return MathFunctions.sigmoid(sum);
   }
 

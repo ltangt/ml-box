@@ -4,7 +4,7 @@ import org.ltang.mlbox.utils.VectorUtil;
 
 
 /**
- * The L2 regularization loss
+ * The L2 regularization _loss
  * @author Liang Tang
  */
 public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
@@ -15,7 +15,7 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
 
     double[] priorBeta = null;
     
-    // Whether the last feature is the intercept or not (intercept has no L2 loss).
+    // Whether the last feature is the intercept or not (intercept has no L2 _loss).
     boolean hasIntercept = true;
 
     transient double[] beta = null;
@@ -52,7 +52,7 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
     
     
     /**
-     * Get the gradient of the L2 regularizer loss
+     * Get the gradient of the L2 regularizer _loss
      *
      * @param dimIndex
      * @return
