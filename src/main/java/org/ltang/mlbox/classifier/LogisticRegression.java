@@ -74,16 +74,21 @@ public class LogisticRegression {
    */
   public void train(int dimension, final Instance[] instances) {
     // Create the logistic loss function
-    LogisticLoss logLoss = new LogisticLoss(dimension, instances);
+    final LogisticLoss logLoss = new LogisticLoss(dimension, instances);
     // Create the L2 loss
-    L2RegularizerLoss l2loss = new L2RegularizerLoss(dimension);
+    final L2RegularizerLoss l2loss;
+    if (_prior != null) {
+      l2loss = new L2RegularizerLoss(_prior);
+    } else {
+      l2loss = new L2RegularizerLoss(dimension);
+    }
     // Combine the two loss functions
-    LinearCombineLoss loss = new LinearCombineLoss();
+    final LinearCombineLoss loss = new LinearCombineLoss();
     loss.add(logLoss);
     loss.add(l2loss, _lambda);
 
     // Create the optimizer
-    CoordinateLipschitzGradientOptimizer optimizer = new CoordinateLipschitzGradientOptimizer(dimension, loss);
+    final CoordinateLipschitzGradientOptimizer optimizer = new CoordinateLipschitzGradientOptimizer(dimension, loss);
     if (_maxIter > 0) {
       optimizer.setMaxNumIteration(_maxIter);
     }
