@@ -11,14 +11,14 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
 
     final static double EPS = 1E-5;
 
-    int dimension = -1;
+    int _dimension = -1;
 
-    double[] priorBeta = null;
+    double[] _priorBeta = null;
     
     // Whether the last feature is the intercept or not (intercept has no L2 _loss).
-    boolean hasIntercept = true;
+    boolean _hasIntercept = true;
 
-    transient double[] beta = null;
+    double[] _beta = null;
     
     public L2RegularizerLoss(int dimension) {
     	this(dimension, null, false);
@@ -39,15 +39,15 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
     public L2RegularizerLoss(int dimension, double[] priorBeta, 
     		boolean isLastFeatureIntercept) {
     	if (priorBeta != null) {
-    		this.priorBeta = VectorUtil.copyNew(priorBeta);
-        	this.dimension = priorBeta.length;
+    		_priorBeta = VectorUtil.copyNew(priorBeta);
+        	_dimension = priorBeta.length;
     	}
     	else {
-    		this.priorBeta = null;
-    		this.dimension = dimension;
+    		_priorBeta = null;
+    		_dimension = dimension;
     	}
-    	this.beta = new double[dimension];
-    	this.hasIntercept = isLastFeatureIntercept;
+    	_beta = new double[dimension];
+    	_hasIntercept = isLastFeatureIntercept;
     }
     
     
@@ -59,11 +59,11 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
      */
     @Override
     public double getGradient(int dimIndex) {
-    	if (hasIntercept == false || dimIndex < dimension-1) {
-	    	if (priorBeta == null) {
-	            return beta[dimIndex];
+    	if (_hasIntercept == false || dimIndex < _dimension -1) {
+	    	if (_priorBeta == null) {
+	            return _beta[dimIndex];
 	        } else {
-	            return beta[dimIndex] - priorBeta[dimIndex];
+	            return _beta[dimIndex] - _priorBeta[dimIndex];
 	        }
     	}
     	else {
@@ -78,17 +78,17 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
 
     @Override
     public void coefficientUpdate(int dimIndex, double delta, double[] newBeta) {
-        this.beta = newBeta;
+        _beta = newBeta;
     }
 
 	@Override
 	public double cost(double[] beta) {
 		double allCost = VectorUtil.innerProduct(beta, beta) / 2;
-		if (!hasIntercept) {
+		if (!_hasIntercept) {
 			return allCost;
 		}
 		else {
-			return allCost - beta[dimension-1]*beta[dimension-1]/2;
+			return allCost - beta[_dimension -1]*beta[_dimension -1]/2;
 		}
 	}
 	

@@ -22,6 +22,9 @@ public class LogisticRegression {
   // The trained coefficients
   double[] _beta = null;
 
+  // The prior model coefficients
+  double[] _prior = null;
+
   // The maximum iteration for the optimization algorithm
   int _maxIter = -1;
 
@@ -37,6 +40,12 @@ public class LogisticRegression {
     this._lambda = lambda;
     this._maxIter = maxIter;
   }
+
+  public void setPrior(final double[] priorBeta) {
+    _prior = new double[priorBeta.length];
+    System.arraycopy(priorBeta, 0, _prior, 0, priorBeta.length);
+  }
+
 
   /**
    * Train the logistic regression using dense vector data
