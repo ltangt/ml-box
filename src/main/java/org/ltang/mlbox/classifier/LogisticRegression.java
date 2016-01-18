@@ -28,6 +28,9 @@ public class LogisticRegression {
   // The maximum iteration for the optimization algorithm
   int _maxIter = -1;
 
+  // debug mode
+  int _debug = 0;
+
   public LogisticRegression() {
     this(1.0);
   }
@@ -44,6 +47,10 @@ public class LogisticRegression {
   public void setPrior(final double[] priorBeta) {
     _prior = new double[priorBeta.length];
     System.arraycopy(priorBeta, 0, _prior, 0, priorBeta.length);
+  }
+
+  public void setDebug(final int debug) {
+    _debug = debug;
   }
 
 
@@ -89,6 +96,7 @@ public class LogisticRegression {
 
     // Create the optimizer
     final CoordinateLipschitzGradientOptimizer optimizer = new CoordinateLipschitzGradientOptimizer(dimension, loss);
+    optimizer.setDebug(_debug);
     if (_maxIter > 0) {
       optimizer.setMaxNumIteration(_maxIter);
     }

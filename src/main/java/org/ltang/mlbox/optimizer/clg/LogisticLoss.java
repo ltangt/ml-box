@@ -20,6 +20,7 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
   // the sum of the inner product between the beta_j and x_j
   final double[] _innerProducts;
 
+  // the number of features without considering the intercept term
   final int _dimension;
 
   final Instance[] _instances;

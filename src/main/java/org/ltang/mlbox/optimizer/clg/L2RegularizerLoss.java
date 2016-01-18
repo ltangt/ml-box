@@ -11,39 +11,30 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
 
   int _dimension = -1;
 
+  // Has _dimension+1 elements, and the last dimension is the intercept
   double[] _priorBeta = null;
 
-  // Whether the last feature is the intercept or not (intercept has no L2 _loss).
-  boolean _hasIntercept = true;
-
+  // Has _dimension+1 elements, and the last dimension is the intercept
   double[] _beta = null;
 
   public L2RegularizerLoss(int dimension) {
-    this(dimension, null, false);
+    this(dimension, null);
   }
 
   public L2RegularizerLoss(double[] priorBeta) {
-    this(priorBeta.length, priorBeta, false);
+    this(priorBeta.length, priorBeta);
   }
 
-  public L2RegularizerLoss(int dimension, boolean isLastFeatureIntercept) {
-    this(dimension, null, isLastFeatureIntercept);
-  }
 
-  public L2RegularizerLoss(double[] priorBeta, boolean isLastFeatureIntercept) {
-    this(priorBeta.length, priorBeta, isLastFeatureIntercept);
-  }
-
-  public L2RegularizerLoss(int dimension, double[] priorBeta, boolean isLastFeatureIntercept) {
+  public L2RegularizerLoss(int dimension, double[] priorBeta) {
     if (priorBeta != null) {
       _priorBeta = VectorUtil.copyNew(priorBeta);
-      _dimension = priorBeta.length;
+      _dimension = priorBeta.length -1;
     } else {
       _priorBeta = null;
       _dimension = dimension;
     }
-    _beta = new double[dimension];
-    _hasIntercept = isLastFeatureIntercept;
+    _beta = new double[dimension + 1];
   }
 
   /**
@@ -54,13 +45,15 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
    */
   @Override
   public double getGradient(int dimIndex) {
-    if (_hasIntercept == false || dimIndex < _dimension - 1) {
+    if (dimIndex < _dimension) {
       if (_priorBeta == null) {
         return _beta[dimIndex];
-      } else {
+      }
+      else {
         return _beta[dimIndex] - _priorBeta[dimIndex];
       }
-    } else {
+    }
+    else {
       return 0;
     }
   }
@@ -77,11 +70,14 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
 
   @Override
   public double cost(double[] beta) {
-    double allCost = VectorUtil.innerProduct(beta, beta) / 2;
-    if (!_hasIntercept) {
-      return allCost;
-    } else {
-      return allCost - beta[_dimension - 1] * beta[_dimension - 1] / 2;
+    if (_priorBeta == null) {
+      double allCost = VectorUtil.innerProduct(beta, beta) / 2;
+      return allCost - beta[_dimension] * beta[_dimension] / 2;
+    }
+    else {
+      double[] diffVec = VectorUtil.minus(beta, _priorBeta);
+      double allCost = VectorUtil.innerProduct(diffVec, diffVec) / 2;
+      return allCost - diffVec[_dimension] * diffVec[_dimension] / 2;
     }
   }
 }

@@ -36,6 +36,16 @@ public final class VectorUtil {
     return ret;
   }
 
+  public static double[] minus(final double[] v1, final double[] v2) {
+    if (v1.length != v2.length) {
+      throw new IllegalArgumentException("Two vectors' dimensions are not identical !");
+    }
+    double[] ret = new double[v1.length];
+    for (int i=0; i<v1.length; i++) {
+      ret[i] = v1[i]-v2[i];
+    }
+    return ret;
+  }
 
   public static double[] copyNew(final double[] v) {
     return Arrays.copyOf(v, v.length);
