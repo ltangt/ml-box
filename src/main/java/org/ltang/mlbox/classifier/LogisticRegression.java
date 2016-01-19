@@ -36,12 +36,12 @@ public class LogisticRegression {
   }
 
   public LogisticRegression(double lambda) {
-    this._lambda = lambda;
+    _lambda = lambda;
   }
 
   public LogisticRegression(final double lambda, final int maxIter) {
-    this._lambda = lambda;
-    this._maxIter = maxIter;
+    _lambda = lambda;
+    _maxIter = maxIter;
   }
 
   public void setPrior(final double[] priorBeta) {
@@ -66,7 +66,6 @@ public class LogisticRegression {
     // Convert the dense vectors into sparse representation
     int dimension = features[0].length;
     Instance[] instances = new Instance[features.length];
-    SparseVector[] sparseFeatures = new SparseVector[features.length];
     for (int instIndex = 0; instIndex < features.length; instIndex++) {
       SparseVector f = new SparseVector(features[instIndex]);
       instances[instIndex] = new Instance(f, labels[instIndex]);
@@ -95,7 +94,7 @@ public class LogisticRegression {
     loss.add(l2loss, _lambda);
 
     // Create the optimizer
-    final CoordinateLipschitzGradientOptimizer optimizer = new CoordinateLipschitzGradientOptimizer(dimension, loss);
+    final CoordinateLipschitzGradientOptimizer optimizer = new CoordinateLipschitzGradientOptimizer(loss);
     optimizer.setDebug(_debug);
     if (_maxIter > 0) {
       optimizer.setMaxNumIteration(_maxIter);
@@ -111,10 +110,10 @@ public class LogisticRegression {
   }
 
   public double predict(final SparseVector feature) {
-    if (this._beta == null) {
+    if (_beta == null) {
       throw new IllegalStateException("The coefficients have not been trained!");
     }
-    double sum = feature.innerProduct(this._beta);
+    double sum = feature.innerProduct(_beta);
     sum = sum + _beta[_beta.length - 1];
     return MathFunctions.sigmoid(sum);
   }

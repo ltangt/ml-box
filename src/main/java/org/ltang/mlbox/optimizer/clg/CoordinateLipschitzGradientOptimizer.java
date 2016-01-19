@@ -1,6 +1,7 @@
 package org.ltang.mlbox.optimizer.clg;
 
 import org.apache.log4j.Logger;
+import org.ltang.mlbox.optimizer.LipschitzConstantGradientLoss;
 import org.ltang.mlbox.utils.MathFunctions;
 import org.ltang.mlbox.utils.VectorUtil;
 
@@ -17,23 +18,24 @@ public class CoordinateLipschitzGradientOptimizer {
 
   final double[] _beta;
 
+  // The number of features plus 1 (intercept term)
   final int _dimension;
 
   int _max_iter = 500;
 
   final double[] _maxSecondDerivaties;
 
-  final CoordinateLipschitzGradientLoss _loss;
+  final LipschitzConstantGradientLoss _loss;
 
   transient int DEBUG = 0;
 
   final static double EPS = 1E-5;
 
-  public CoordinateLipschitzGradientOptimizer(int dimension, CoordinateLipschitzGradientLoss loss) {
-    _dimension = dimension;
+  public CoordinateLipschitzGradientOptimizer(LipschitzConstantGradientLoss loss) {
+    _dimension = loss.getDimension();
     _loss = loss;
-    _beta = new double[dimension];
-    _maxSecondDerivaties = new double[dimension];
+    _beta = new double[_dimension+1];
+    _maxSecondDerivaties = new double[_dimension+1];
     _loss.coefficientUpdate(0, 0, _beta);
   }
 
@@ -55,8 +57,8 @@ public class CoordinateLipschitzGradientOptimizer {
     double grad = 0;
     double maxSecondDerivative = 0;
     double delta;
-    for (int dimIndex = 0; dimIndex < _dimension; dimIndex++) {
-      grad = _loss.getGradient(dimIndex);
+    for (int dimIndex = 0; dimIndex < _dimension+1; dimIndex++) {
+      grad = _loss.getGradient(dimIndex, _beta);
       maxSecondDerivative = _maxSecondDerivaties[dimIndex];
 
       delta = -1.0 / maxSecondDerivative * grad;
@@ -74,7 +76,7 @@ public class CoordinateLipschitzGradientOptimizer {
   public void train() {
     // Initialize the coefficients and costs for each _loss objective
 
-    for (int dimIndex = 0; dimIndex < _dimension; dimIndex++) {
+    for (int dimIndex = 0; dimIndex < _dimension+1; dimIndex++) {
       double maxSecDev = _loss.getMaxSecondDerivative(dimIndex);
       if (maxSecDev < EPS) {
         maxSecDev = EPS;

@@ -34,6 +34,7 @@ public class LogisticRegressionTest {
     data[3] = new float[]{0f, 1f};
     labels[3] = 1;
     LR.train(data, labels);
+    LR.setDebug(1);
     System.out.println(VectorUtil.toString(LR.getCoefficients()));
 
     Assert.assertTrue(LR.predict(new float[]{0.3f, 0.5f}) > 0.5);
@@ -80,7 +81,7 @@ public class LogisticRegressionTest {
     }
     AUC auc = new AUC();
     double aucScore = auc.calc(scores, labels);
-    System.out.println("AUC = " + aucScore + " , Accuracy = " + ((double) numAcc) / numTests);
+    System.out.println("ml-box: AUC = " + aucScore + " , Accuracy = " + ((double) numAcc) / numTests);
 
     // Build another model using Liblinear: http://liblinear.bwaldvogel.de
     Problem problem = Problem.readFromFile(new File("data/libsvm/a1a.train.txt"), 1);
@@ -101,7 +102,7 @@ public class LogisticRegressionTest {
       }
     }
     double LibLinear_aucScore = auc.calc(scores, labels);
-    System.out.println("Liblinear AUC = " + aucScore + " , Accuracy = " + ((double) numAcc) / numTests);
+    System.out.println("Liblinear AUC = " + LibLinear_aucScore + " , Accuracy = " + ((double) numAcc) / numTests);
     Assert.assertTrue(aucScore > LibLinear_aucScore*0.95);
   }
 }

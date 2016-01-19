@@ -2,6 +2,7 @@ package org.ltang.mlbox.optimizer.clg;
 
 import org.ltang.mlbox.data.Instance;
 import org.ltang.mlbox.data.SparseVector;
+import org.ltang.mlbox.optimizer.LipschitzConstantGradientLoss;
 import org.ltang.mlbox.utils.MathFunctions;
 
 
@@ -9,7 +10,7 @@ import org.ltang.mlbox.utils.MathFunctions;
  * The logistic _loss (the negative log-likelihood of logistic regression).
  * @author Liang Tang
  */
-public class LogisticLoss extends CoordinateLipschitzGradientLoss {
+public class LogisticLoss implements LipschitzConstantGradientLoss {
 
   final static double EPS = 1E-5;
 
@@ -45,8 +46,8 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
     if (Math.abs(delta) < EPS) {
       return;
     }
-    int[] colIndices = this._colIndexArrs[dimIndex];
-    double[] colValues = this._colValArrs[dimIndex];
+    int[] colIndices = _colIndexArrs[dimIndex];
+    double[] colValues = _colValArrs[dimIndex];
     for (int i = 0; i < colIndices.length; i++) {
       int instIndex = colIndices[i];
       double x_j = colValues[i];
@@ -70,7 +71,7 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
 
   private void createColumnStore() {
     // First Scan: Count the number of entries for each _dimension
-    final int[] maxNumEntries = new int[_dimension];
+    final int[] maxNumEntries = new int[_dimension+1];
     int numInsts = _instances.length;
     for (int instIndex = 0; instIndex < numInsts; instIndex++) {
       Instance inst = _instances[instIndex];
@@ -86,16 +87,16 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
         maxNumEntries[dimIndex]++;
       }
     }
-    maxNumEntries[_dimension - 1] = numInsts;
+    maxNumEntries[_dimension] = numInsts;
 
     // Allocate the memory for the column store
-    for (int dim = 0; dim < _dimension; dim++) {
+    for (int dim = 0; dim < _dimension+1; dim++) {
       _colIndexArrs[dim] = new int[maxNumEntries[dim]];
       _colValArrs[dim] = new double[maxNumEntries[dim]];
     }
 
     // Second Scan : Build the column store
-    final int[] entryIndices = new int[_dimension];
+    final int[] entryIndices = new int[_dimension+1];
     for (int instIndex = 0; instIndex < _instances.length; instIndex++) {
       Instance inst = _instances[instIndex];
       float weight = inst.getWeight();
@@ -112,8 +113,8 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
         _colValArrs[dimIndex][entryIndex] = x[j];
         entryIndices[dimIndex]++;
       }
-      _colIndexArrs[_dimension - 1][instIndex] = instIndex;
-      _colValArrs[_dimension - 1][instIndex] = 1;
+      _colIndexArrs[_dimension][instIndex] = instIndex;
+      _colValArrs[_dimension][instIndex] = 1;
     }
   }
 
@@ -124,10 +125,10 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
    * @return
    */
   @Override
-  public double getGradient(int dimIndex) {
+  public double getGradient(final int dimIndex, final double[] beta) {
     double grad = 0;
-    final int[] colIndices = this._colIndexArrs[dimIndex];
-    final double[] colValues = this._colValArrs[dimIndex];
+    final int[] colIndices = _colIndexArrs[dimIndex];
+    final double[] colValues = _colValArrs[dimIndex];
     for (int i = 0; i < colIndices.length; i++) {
       int instIndex = colIndices[i];
       Instance inst = _instances[instIndex];
@@ -144,10 +145,10 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
   }
 
   @Override
-  public double getMaxSecondDerivative(int dimIndex) {
+  public double getMaxSecondDerivative(final int dimIndex) {
     double maxSecondDerivative = 0;
-    final int[] colIndices = this._colIndexArrs[dimIndex];
-    final double[] colValues = this._colValArrs[dimIndex];
+    final int[] colIndices = _colIndexArrs[dimIndex];
+    final double[] colValues = _colValArrs[dimIndex];
     for (int i = 0; i < colIndices.length; i++) {
       int instIndex = colIndices[i];
       Instance inst = _instances[instIndex];
@@ -159,7 +160,7 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
   }
 
   @Override
-  public void coefficientUpdate(int dimIndex, double delta, double[] newBeta) {
+  public void coefficientUpdate(final int dimIndex, final double delta, final double[] newBeta) {
     updateInnerProducts(dimIndex, delta);
   }
 
@@ -178,6 +179,11 @@ public class LogisticLoss extends CoordinateLipschitzGradientLoss {
       cost += -logLikelihood * weight;
     }
     return cost;
+  }
+
+  @Override
+  public int getDimension() {
+    return _dimension;
   }
 
   private double expected(final double[] beta, final SparseVector feature) {

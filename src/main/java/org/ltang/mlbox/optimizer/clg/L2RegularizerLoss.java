@@ -1,5 +1,6 @@
 package org.ltang.mlbox.optimizer.clg;
 
+import org.ltang.mlbox.optimizer.LipschitzConstantGradientLoss;
 import org.ltang.mlbox.utils.VectorUtil;
 
 
@@ -7,15 +8,12 @@ import org.ltang.mlbox.utils.VectorUtil;
  * The L2 regularization _loss
  * @author Liang Tang
  */
-public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
+public class L2RegularizerLoss implements LipschitzConstantGradientLoss {
 
   int _dimension = -1;
 
   // Has _dimension+1 elements, and the last dimension is the intercept
   double[] _priorBeta = null;
-
-  // Has _dimension+1 elements, and the last dimension is the intercept
-  double[] _beta = null;
 
   public L2RegularizerLoss(int dimension) {
     this(dimension, null);
@@ -34,7 +32,6 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
       _priorBeta = null;
       _dimension = dimension;
     }
-    _beta = new double[dimension + 1];
   }
 
   /**
@@ -44,13 +41,13 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
    * @return
    */
   @Override
-  public double getGradient(int dimIndex) {
+  public double getGradient(final int dimIndex, final double[] beta) {
     if (dimIndex < _dimension) {
       if (_priorBeta == null) {
-        return _beta[dimIndex];
+        return beta[dimIndex];
       }
       else {
-        return _beta[dimIndex] - _priorBeta[dimIndex];
+        return beta[dimIndex] - _priorBeta[dimIndex];
       }
     }
     else {
@@ -59,17 +56,12 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
   }
 
   @Override
-  public double getMaxSecondDerivative(int dimIndex) {
+  public double getMaxSecondDerivative(final int dimIndex) {
     return 1;
   }
 
   @Override
-  public void coefficientUpdate(int dimIndex, double delta, double[] newBeta) {
-    _beta = newBeta;
-  }
-
-  @Override
-  public double cost(double[] beta) {
+  public double cost(final double[] beta) {
     if (_priorBeta == null) {
       double allCost = VectorUtil.innerProduct(beta, beta) / 2;
       return allCost - beta[_dimension] * beta[_dimension] / 2;
@@ -79,5 +71,15 @@ public class L2RegularizerLoss extends CoordinateLipschitzGradientLoss {
       double allCost = VectorUtil.innerProduct(diffVec, diffVec) / 2;
       return allCost - diffVec[_dimension] * diffVec[_dimension] / 2;
     }
+  }
+
+  @Override
+  public int getDimension() {
+    return _dimension;
+  }
+
+  @Override
+  public void coefficientUpdate(int dimIndex, double delta, double[] newBeta) {
+
   }
 }
