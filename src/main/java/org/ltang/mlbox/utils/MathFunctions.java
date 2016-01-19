@@ -9,7 +9,7 @@ import java.util.Random;
  */
 public class MathFunctions {
 
-  public static final double EPS = 1.0E-13;
+  public static final double EPS = 1.0E-8;
 
   public static double sigmoid(double v) {
     return 1.0 / (1 + Math.exp(-v));

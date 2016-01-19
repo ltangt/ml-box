@@ -23,13 +23,16 @@ public class CoordinateLipschitzGradientOptimizer {
 
   int _max_iter = 500;
 
+  // norm of the objective's gradient is less than tol times its initial value
+  double _tolerance = 1E-4;
+
+  int DEBUG = 0;
+
   final double[] _maxSecondDerivaties;
 
   final LipschitzConstantGradientLoss _loss;
 
-  transient int DEBUG = 0;
-
-  final static double EPS = 1E-5;
+  final static double EPS = 1E-7;
 
   public CoordinateLipschitzGradientOptimizer(LipschitzConstantGradientLoss loss) {
     _dimension = loss.getDimension();
@@ -47,34 +50,35 @@ public class CoordinateLipschitzGradientOptimizer {
     _max_iter = maxIter;
   }
 
+  public void setToleranceForStopCriterion(final double tol) {
+    _tolerance = tol;
+  }
+
   /**
-   *
-   * @param iter
-   * @return The number of dimensions been updated
+   * Update one dimension of the coefficients
+   * @return The norm of the gradient
    */
-  private int updateBeta(final int iter) {
-    int nBetaUpdated = 0;
+  private double updateBeta() {
     double grad = 0;
     double maxSecondDerivative = 0;
     double delta;
+    double gradNorm = 0;
     for (int dimIndex = 0; dimIndex < _dimension+1; dimIndex++) {
       grad = _loss.getGradient(dimIndex, _beta);
       maxSecondDerivative = _maxSecondDerivaties[dimIndex];
-
       delta = -1.0 / maxSecondDerivative * grad;
       double newBeta = _beta[dimIndex] + delta;
       if (MathFunctions.almostEqual(newBeta, _beta[dimIndex], EPS) == false) {
-        nBetaUpdated++;
         _beta[dimIndex] = newBeta;
         _loss.coefficientUpdate(dimIndex, delta, _beta);
       }
+      gradNorm += grad*grad;
     }
 
-    return nBetaUpdated;
+    return gradNorm;
   }
 
   public void train() {
-    // Initialize the coefficients and costs for each _loss objective
 
     for (int dimIndex = 0; dimIndex < _dimension+1; dimIndex++) {
       double maxSecDev = _loss.getMaxSecondDerivative(dimIndex);
@@ -88,23 +92,30 @@ public class CoordinateLipschitzGradientOptimizer {
       log.info("Initial cost: " + _loss.cost(_beta));
     }
 
+    // Compute the initial gradient's norm
+    double initGradNorm = 0;
+    for (int dimIndex = 0; dimIndex < _dimension+1; dimIndex++) {
+      double grad = _loss.getGradient(dimIndex, _beta);
+      initGradNorm += grad*grad;
+    }
+
     // Start optimization
-    int iter = 0;
+    int iter;
     for (iter = 0; iter < _max_iter; iter++) {
-      int nCoefficientsUpdated = updateBeta(iter);
-      if (nCoefficientsUpdated == 0) {
+      double gradNorm = updateBeta();
+      if (gradNorm <= initGradNorm * _tolerance) {
         break; // all Converged
       }
 
       /////////////////// debug //////////////////////
       if (DEBUG == 1) {
         if (iter % 2 == 0) {
-          log.info("iter : " + iter + ",  cost : " + _loss.cost(_beta) + ", #cofficientUpdated: " + nCoefficientsUpdated);
+          log.info("iter : " + iter + ",  cost : " + _loss.cost(_beta) + ", #gradnorm: " + gradNorm);
         }
       } else if (DEBUG == 2) {
-        log.info("iter : " + iter + ",  cost : " + _loss.cost(_beta) + ", #cofficientUpdated: " + nCoefficientsUpdated);
+        log.info("iter : " + iter + ",  cost : " + _loss.cost(_beta) + ", #gradnorm: " + gradNorm);
       } else if (DEBUG == 3) {
-        log.info("iter : " + iter + ", cost : " + _loss.cost(_beta) + ", #cofficientUpdated: " + nCoefficientsUpdated);
+        log.info("iter : " + iter + ", cost : " + _loss.cost(_beta) + ", #gradNorm: " + gradNorm);
         printParameters();
       }
       ////////////////////////////////////////////////

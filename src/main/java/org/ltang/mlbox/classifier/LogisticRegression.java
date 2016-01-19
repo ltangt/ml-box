@@ -28,6 +28,9 @@ public class LogisticRegression {
   // The maximum iteration for the optimization algorithm
   int _maxIter = -1;
 
+  // norm of the objective's gradient is less than tol times its initial value
+  double _tolerance = 1E-4;
+
   // debug mode
   int _debug = 0;
 
@@ -51,6 +54,10 @@ public class LogisticRegression {
 
   public void setDebug(final int debug) {
     _debug = debug;
+  }
+
+  public void setToleranceForStopCriterion(final double tol) {
+    _tolerance = tol;
   }
 
 
@@ -98,6 +105,9 @@ public class LogisticRegression {
     optimizer.setDebug(_debug);
     if (_maxIter > 0) {
       optimizer.setMaxNumIteration(_maxIter);
+    }
+    if (_tolerance > 0) {
+      optimizer.setToleranceForStopCriterion(_tolerance);
     }
 
     // Start the training algorithm to minimize the loss
