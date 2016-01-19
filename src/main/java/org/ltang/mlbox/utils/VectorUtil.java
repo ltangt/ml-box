@@ -89,8 +89,39 @@ public final class VectorUtil {
     return v;
   }
 
-  public static double norm2(final double[] v) {
-    return Math.sqrt(innerProduct(v,v));
+  /**
+   * Compute the norm of a dense vector. The scale-version is more accurate than takeing the sum of square and get the square root.
+   * @param x
+   * @return
+   */
+  public static double norm2(final double[] x) {
+    int n = x.length;
+
+    if (n < 1) {
+      return 0;
+    }
+
+    if (n == 1) {
+      return Math.abs(x[0]);
+    }
+
+    double scale = 0; // scaling factor that is factored out
+    double sum = 1; // basic sum of squares from which scale has been factored out
+    for (int i = 0; i < n; i++) {
+      if (x[i] != 0) {
+        double abs = Math.abs(x[i]);
+        // try to get the best scaling factor
+        if (scale < abs) {
+          double t = scale / abs;
+          sum = 1 + sum * (t * t);
+          scale = abs;
+        } else {
+          double t = abs / scale;
+          sum += t * t;
+        }
+      }
+    }
+    return scale * Math.sqrt(sum);
   }
 
   public static String toString(double[] v) {

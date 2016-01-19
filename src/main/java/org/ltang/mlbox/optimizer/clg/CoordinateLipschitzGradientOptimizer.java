@@ -59,10 +59,10 @@ public class CoordinateLipschitzGradientOptimizer {
    * @return The norm of the gradient
    */
   private double updateBeta() {
-    double grad = 0;
-    double maxSecondDerivative = 0;
+    double grad;
+    double maxSecondDerivative;
     double delta;
-    double gradNorm = 0;
+    double[] gradVec = new double[_dimension+1];
     for (int dimIndex = 0; dimIndex < _dimension+1; dimIndex++) {
       grad = _loss.getGradient(dimIndex, _beta);
       maxSecondDerivative = _maxSecondDerivaties[dimIndex];
@@ -72,10 +72,10 @@ public class CoordinateLipschitzGradientOptimizer {
         _beta[dimIndex] = newBeta;
         _loss.coefficientUpdate(dimIndex, delta, _beta);
       }
-      gradNorm += grad*grad;
+      gradVec[dimIndex] = grad;
     }
 
-    return gradNorm;
+    return VectorUtil.norm2(gradVec);
   }
 
   public void train() {
@@ -88,15 +88,16 @@ public class CoordinateLipschitzGradientOptimizer {
       _maxSecondDerivaties[dimIndex] = maxSecDev;
     }
 
-    if (DEBUG >= 1) {
-      log.info("Initial cost: " + _loss.cost(_beta));
-    }
-
     // Compute the initial gradient's norm
-    double initGradNorm = 0;
+    double[] gradVec = new double[_dimension+1];
     for (int dimIndex = 0; dimIndex < _dimension+1; dimIndex++) {
       double grad = _loss.getGradient(dimIndex, _beta);
-      initGradNorm += grad*grad;
+      gradVec[dimIndex] = grad;
+    }
+    double initGradNorm = VectorUtil.norm2(gradVec);
+
+    if (DEBUG >= 1) {
+      log.info("Initial cost: " + _loss.cost(_beta)+", initial gradient norm: "+initGradNorm);
     }
 
     // Start optimization
