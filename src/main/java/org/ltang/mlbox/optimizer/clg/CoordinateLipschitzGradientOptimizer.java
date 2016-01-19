@@ -1,8 +1,8 @@
 package org.ltang.mlbox.optimizer.clg;
 
+import org.apache.log4j.Logger;
 import org.ltang.mlbox.utils.MathFunctions;
 import org.ltang.mlbox.utils.VectorUtil;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CoordinateLipschitzGradientOptimizer {
 
-  final org.slf4j.Logger log = LoggerFactory.getLogger(CoordinateLipschitzGradientOptimizer.class);
+  private static final Logger log = Logger.getLogger(CoordinateLipschitzGradientOptimizer.class);
 
   final double[] _beta;
 
@@ -83,7 +83,7 @@ public class CoordinateLipschitzGradientOptimizer {
     }
 
     if (DEBUG >= 1) {
-      System.out.println("Initial cost: " + _loss.cost(_beta));
+      log.info("Initial cost: " + _loss.cost(_beta));
     }
 
     // Start optimization
@@ -100,11 +100,9 @@ public class CoordinateLipschitzGradientOptimizer {
           log.info("iter : " + iter + ",  cost : " + _loss.cost(_beta) + ", #cofficientUpdated: " + nCoefficientsUpdated);
         }
       } else if (DEBUG == 2) {
-        log.info(
-            "iter : " + iter + ",  cost : " + _loss.cost(_beta) + ", #cofficientUpdated: " + nCoefficientsUpdated);
+        log.info("iter : " + iter + ",  cost : " + _loss.cost(_beta) + ", #cofficientUpdated: " + nCoefficientsUpdated);
       } else if (DEBUG == 3) {
-        log.info(
-            "iter : " + iter + ", cost : " + _loss.cost(_beta) + ", #cofficientUpdated: " + nCoefficientsUpdated);
+        log.info("iter : " + iter + ", cost : " + _loss.cost(_beta) + ", #cofficientUpdated: " + nCoefficientsUpdated);
         printParameters();
       }
       ////////////////////////////////////////////////
